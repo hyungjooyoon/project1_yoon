@@ -13,6 +13,18 @@ public class App
      public static void main( String[] args ) {
         Javalin app = Javalin.create().start(7070);
         app.get("/", ctx -> ctx.result("Hello!") );
+        
+        app.routes(() -> {
+            path("register", () -> {
+                get(ctx -> {
+                    ctx.result("Please Register");
+                });
+                post(ctx -> {
+                    ctx.result("You have Registered");
+                });
+            });
+        });
+
         app.routes(() -> {
             path("login", () -> {
                 get(ctx -> {
