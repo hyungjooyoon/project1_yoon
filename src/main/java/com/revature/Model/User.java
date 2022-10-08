@@ -3,7 +3,7 @@ package com.revature.Model;
 public class User {
     private String username;
     private String password;
-    private String role;
+    private String role = "employee";
 
     public void setUsername (String username) {
         this.username = username;

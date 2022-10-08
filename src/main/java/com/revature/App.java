@@ -4,6 +4,7 @@ import io.javalin.Javalin;
 import static io.javalin.apibuilder.ApiBuilder.*;
 import db.Database;
 import com.revature.Model.*;
+import com.revature.DAO.UserDao;
 /**
  * Hello world!
  *
@@ -20,6 +21,8 @@ public class App
                     ctx.result("Please Register");
                 });
                 post(ctx -> {
+                    User user = ctx.bodyAsClass(User.class);
+                    UserDao.addUser(user);
                     ctx.result("You have Registered");
                 });
             });
@@ -37,6 +40,5 @@ public class App
                 });
             });
         });
-        Database.connect();
     }
 }
