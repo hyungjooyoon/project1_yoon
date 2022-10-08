@@ -31,8 +31,6 @@ public class Database {
 
     static {
         Database.getProps();
-        System.out.println(username);
-        System.out.println(password);
         if (ds == null) {
             HikariConfig config = new HikariConfig();
             config.setDataSourceClassName("org.postgresql.ds.PGSimpleDataSource");
