@@ -2,9 +2,13 @@ package com.revature;
 
 import io.javalin.Javalin;
 import static io.javalin.apibuilder.ApiBuilder.*;
+
+import java.security.NoSuchAlgorithmException;
+
 import db.Database;
 import com.revature.Model.*;
 import com.revature.DAO.UserDao;
+import com.revature.Util.Auth;
 /**
  * Hello world!
  *
@@ -14,6 +18,7 @@ public class App
      public static void main( String[] args ) {
         Javalin app = Javalin.create().start(7070);
         app.get("/", ctx -> ctx.result("Hello!") );
+
         
         app.routes(() -> {
             path("register", () -> {
