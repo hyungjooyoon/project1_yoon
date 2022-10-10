@@ -29,7 +29,7 @@ public class Auth {
         return hashedPassword;
     }
 
-    public static boolean checkPassword (String pass, String hashedPassword) {
+    public static boolean checkPassword(String pass, String hashedPassword) {
         String saltHex = hashedPassword.substring(0, 32);
         byte[] salt = hexToByteArray(saltHex);
         boolean isSame = false;

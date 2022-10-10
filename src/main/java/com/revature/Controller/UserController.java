@@ -19,6 +19,7 @@ public class UserController {
         boolean same = Auth.checkPassword(user.getPassword(), account.getPassword());
         if (same == true) {
             user.setRole(account.getRole());
+            user.setId(account.getId());
             return 1;
         } else {
             return 0;

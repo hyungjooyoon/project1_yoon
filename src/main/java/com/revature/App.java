@@ -1,6 +1,8 @@
 package com.revature;
 
 import io.javalin.Javalin;
+import io.javalin.http.UnauthorizedResponse;
+
 import static io.javalin.apibuilder.ApiBuilder.*;
 
 import db.Database;
@@ -49,6 +51,26 @@ public class App
                     } else {
                         ctx.result("Invalid Credentials");
                     }
+                });
+            });
+        });
+
+        app.routes(() -> {
+            path("tickets", () -> {
+                before(ctx -> {
+                    String username = ctx.sessionAttribute("username");
+                    if (username.equals(null)) {
+                        throw new UnauthorizedResponse();
+                    }
+                });
+                get(ctx -> {
+                    ctx.result("Previously Submitted Tickets");
+                });
+                post(ctx -> {
+                    Ticket ticket = ctx.bodyAsClass(Ticket.class);
+                    System.out.println(ticket.getAmount());
+                    System.out.println(ticket.getDesc());
+                    
                 });
             });
         });
