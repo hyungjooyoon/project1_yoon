@@ -26,7 +26,6 @@ public class Auth {
         } catch (NoSuchAlgorithmException e) {
             e.printStackTrace();
         }
-        System.out.println(hashedPassword);
         return hashedPassword;
     }
 

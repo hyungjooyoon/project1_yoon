@@ -14,13 +14,14 @@ public class UserController {
         return "This username is already in use";
     }
 
-    public static String login(User user) {
+    public static int login(User user) {
         User account = UserDao.getUser(user.getUsername());
         boolean same = Auth.checkPassword(user.getPassword(), account.getPassword());
         if (same == true) {
-            return "Successfully logged in";
+            user.setRole(account.getRole());
+            return 1;
         } else {
-            return "Invalid credentials";
+            return 0;
         }
     }
 }
