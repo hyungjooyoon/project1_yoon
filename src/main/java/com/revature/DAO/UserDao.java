@@ -27,4 +27,25 @@ public class UserDao {
             return 0;
         }
     }
+
+    public static User getUser(String username) {
+        User user = new User();
+        try (Connection conn = Database.getConnection();
+            PreparedStatement stmt = conn.prepareStatement(
+            "SELECT * FROM ticketapi.accounts WHERE username = ?")) {
+            stmt.setString(1, username);
+            try {
+                ResultSet rs = stmt.executeQuery();
+                rs.next();
+                user.setUsername(rs.getString("username"));
+                user.setPassword(rs.getString("password"));
+                user.setRole(rs.getString("role"));
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return user;
+    }
 }

@@ -6,7 +6,7 @@ import java.security.SecureRandom;
 import java.nio.charset.StandardCharsets;
 
 public class Auth {
-    public String hashPassword(String pass) {
+    public static String hashPassword(String pass) {
         String hashedPassword = "";
         try {
             MessageDigest md = MessageDigest.getInstance("SHA-256");
@@ -26,10 +26,11 @@ public class Auth {
         } catch (NoSuchAlgorithmException e) {
             e.printStackTrace();
         }
+        System.out.println(hashedPassword);
         return hashedPassword;
     }
 
-    public boolean checkPassword (String pass, String hashedPassword) {
+    public static boolean checkPassword (String pass, String hashedPassword) {
         String saltHex = hashedPassword.substring(0, 32);
         byte[] salt = hexToByteArray(saltHex);
         boolean isSame = false;
@@ -50,14 +51,14 @@ public class Auth {
         return isSame;
     }
 
-    public static byte[] getSalt() throws NoSuchAlgorithmException {
+    private static byte[] getSalt() throws NoSuchAlgorithmException {
         SecureRandom  random = new SecureRandom();
         byte[] salt = new byte[16];
         random.nextBytes(salt);
         return salt;
     } 
 
-    public static byte[] hexToByteArray(String hex) {
+    private static byte[] hexToByteArray(String hex) {
         byte[] salt = new byte[16];
         for (int i = 0; i < salt.length; i++) {
             int index = i * 2;

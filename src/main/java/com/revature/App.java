@@ -8,11 +8,9 @@ import java.security.NoSuchAlgorithmException;
 import db.Database;
 import com.revature.Model.*;
 import com.revature.DAO.UserDao;
-import com.revature.Util.Auth;
-/**
- * Hello world!
- *
- */
+import com.revature.Controller.UserController;
+
+
 public class App 
 {   
      public static void main( String[] args ) {
@@ -27,8 +25,8 @@ public class App
                 });
                 post(ctx -> {
                     User user = ctx.bodyAsClass(User.class);
-                    UserDao.addUser(user);
-                    ctx.result("You have Registered");
+                    String res = UserController.register(user);
+                    ctx.result(res);
                 });
             });
         });
@@ -40,8 +38,8 @@ public class App
                 });
                 post(ctx -> {
                     User user = ctx.bodyAsClass(User.class);
-                    System.out.println(user);
-                    ctx.result("Logged In!");
+                    String a = UserController.login(user);
+                    ctx.result(a);
                 });
             });
         });
