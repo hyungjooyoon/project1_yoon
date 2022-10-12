@@ -9,6 +9,8 @@ import db.Database;
 import com.revature.Model.*;
 import com.revature.DAO.UserDao;
 import com.revature.Controller.UserController;
+import com.revature.DAO.TicketDao;
+import com.revature.Controller.TicketController;
 import com.revature.Util.SessionUtil;
 
 
@@ -59,7 +61,8 @@ public class App
             path("tickets", () -> {
                 before(ctx -> {
                     String username = ctx.sessionAttribute("username");
-                    if (username.equals(null)) {
+                    System.out.print(username);
+                    if (username == null) {
                         throw new UnauthorizedResponse();
                     }
                 });
@@ -68,9 +71,11 @@ public class App
                 });
                 post(ctx -> {
                     Ticket ticket = ctx.bodyAsClass(Ticket.class);
+                    String res = TicketController.register(ticket);
+                    System.out.println(ticket.getId());
                     System.out.println(ticket.getAmount());
                     System.out.println(ticket.getDesc());
-                    
+                    ctx.result(res);                  
                 });
             });
         });
