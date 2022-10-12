@@ -24,6 +24,7 @@ public class SessionUtil {
         sessionHandler.setHttpOnly(true);
         sessionHandler.setSameSite(HttpCookie.SameSite.STRICT);
         sessionHandler.setSecureRequestOnly(true);
+        sessionHandler.setMaxInactiveInterval(1800);
         return sessionHandler;
     }
 

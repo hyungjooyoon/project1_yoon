@@ -37,6 +37,7 @@ public class UserDao {
             try {
                 ResultSet rs = stmt.executeQuery();
                 rs.next();
+                user.setId(rs.getInt("user_id"));
                 user.setUsername(rs.getString("username"));
                 user.setPassword(rs.getString("password"));
                 user.setRole(rs.getString("role"));
