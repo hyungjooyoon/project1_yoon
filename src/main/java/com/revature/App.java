@@ -97,8 +97,7 @@ public class App
                 });
                 post(ctx -> {
                     byte[] jsonData = ctx.bodyAsBytes();
-                    TicketController.processTicket(jsonData);
-                    
+                    ctx.result(TicketController.processTicket(jsonData));
                 });
             });
         });

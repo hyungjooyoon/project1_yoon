@@ -39,9 +39,19 @@ public class TicketController {
             e.printStackTrace();
             return "Error processing ticket";
         }
-        System.out.println(ticket_id);
-        System.out.println(status);
-        return "";
-
+        String ticketStatus = TicketDao.getStatus(ticket_id);
+        System.out.println(ticketStatus);
+        if (ticketStatus.equals("pending")) {
+            int updated = TicketDao.updateStatus(ticket_id, status);
+            if (updated == 1) {
+                return "Ticket was processed";
+            } else {
+                return "Error processing ticket";
+            }
+        } else if (ticketStatus.equals("")) {
+            return "Ticket doesn't exist";    
+        } else {
+            return "Ticket is already processed";
+        }
     }
 }

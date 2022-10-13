@@ -70,7 +70,28 @@ public class TicketDao {
             }
     }
 
-    public static int updateTicket() {
+    public static int updateStatus(int ticket_id, String status) { 
+        try (Connection conn = Database.getConnection();
+            PreparedStatement stmt = conn.prepareStatement(
+            "UPDATE ticketapi.tickets SET status = ? WHERE ticket_id = ?")) {
+            stmt.setString(1, status);
+            stmt.setInt(2, ticket_id);
+            try {
+                int rows = stmt.executeUpdate();
+                if (rows == 1) {
+                    return 1;
+                } else {
+                    return 0;
+                }
+            } catch (SQLException e) {
+                e.printStackTrace();
+                return 0;
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return 0;
+        }
         
     }
 }
