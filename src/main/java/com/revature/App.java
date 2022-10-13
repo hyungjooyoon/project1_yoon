@@ -83,7 +83,7 @@ public class App
             path("pending", () -> {
                 before(ctx -> {
                     String role = ctx.sessionAttribute("role");
-                    if (!role.equals("manager")) {
+                    if (role == null || !role.equals("manager")) {
                         throw new UnauthorizedResponse();
                     }
                 });
@@ -96,7 +96,8 @@ public class App
                     }
                 });
                 post(ctx -> {
-                    String username = ctx.body();
+                    byte[] jsonData = ctx.bodyAsBytes();
+                    TicketController.processTicket(jsonData);
                     
                 });
             });

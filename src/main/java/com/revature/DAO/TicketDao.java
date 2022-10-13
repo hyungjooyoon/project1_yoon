@@ -37,7 +37,7 @@ public class TicketDao {
             ResultSet rs = stmt.executeQuery();
             while (rs.next()) {
                 Ticket ticket = new Ticket();
-                ticket.setId(rs.getInt("user_id"));
+                ticket.setId(rs.getInt("ticket_id"));
                 ticket.setUserId(rs.getInt("user_id"));
                 ticket.setAmount((float) rs.getInt("amount") / 100);
                 ticket.setDesc(rs.getString("description"));
@@ -51,5 +51,26 @@ public class TicketDao {
             e.printStackTrace();
             return tickets;
         }
+    }
+
+    public static String getStatus(int ticket_id) {
+        String status = "";
+        try (Connection conn = Database.getConnection();
+            PreparedStatement stmt = conn.prepareStatement(
+            "SELECT status FROM ticketapi.tickets WHERE ticket_id = ?")) {
+                stmt.setInt(1, ticket_id);
+                ResultSet rs =stmt.executeQuery();
+                rs.next();
+                status = rs.getString("status");
+                return status;
+
+            } catch (SQLException e) {
+                e.printStackTrace();
+                return status;
+            }
+    }
+
+    public static int updateTicket() {
+        
     }
 }
