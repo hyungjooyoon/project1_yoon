@@ -2,8 +2,9 @@ package com.revature;
 
 import io.javalin.Javalin;
 import io.javalin.http.UnauthorizedResponse;
-
 import static io.javalin.apibuilder.ApiBuilder.*;
+
+import java.util.List;
 
 import db.Database;
 import com.revature.Model.*;
@@ -12,7 +13,6 @@ import com.revature.Controller.UserController;
 import com.revature.DAO.TicketDao;
 import com.revature.Controller.TicketController;
 import com.revature.Util.SessionUtil;
-
 
 
 
@@ -61,7 +61,6 @@ public class App
             path("tickets", () -> {
                 before(ctx -> {
                     String username = ctx.sessionAttribute("username");
-                    System.out.print(username);
                     if (username == null) {
                         throw new UnauthorizedResponse();
                     }
@@ -76,6 +75,29 @@ public class App
                     System.out.println(ticket.getAmount());
                     System.out.println(ticket.getDesc());
                     ctx.result(res);                  
+                });
+            });
+        });
+
+        app.routes(() -> {
+            path("pending", () -> {
+                before(ctx -> {
+                    String role = ctx.sessionAttribute("role");
+                    if (!role.equals("manager")) {
+                        throw new UnauthorizedResponse();
+                    }
+                });
+                get(ctx -> {
+                    List<Ticket> tickets = TicketController.getList();
+                    if (tickets.size() == 0) {
+                        ctx.result("No more pending ticktes");
+                    } else {
+                        ctx.json(tickets);
+                    }
+                });
+                post(ctx -> {
+                    String username = ctx.body();
+                    
                 });
             });
         });

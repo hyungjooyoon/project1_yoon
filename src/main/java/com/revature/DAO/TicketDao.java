@@ -1,6 +1,8 @@
 package com.revature.DAO;
 
 import java.sql.*;
+import java.util.List;
+import java.util.ArrayList;
 import db.Database;
 import com.revature.Model.Ticket;
 
@@ -25,5 +27,29 @@ public class TicketDao {
             e.printStackTrace();
         }
         return 0;
-    } 
+    }
+
+    public static List<Ticket> getPendingTickets() {
+        List<Ticket> tickets = new ArrayList<>();
+        try (Connection conn = Database.getConnection();
+            PreparedStatement stmt = conn.prepareStatement(
+            "SELECT * FROM ticketapi.tickets WHERE status='pending'")) {
+            ResultSet rs = stmt.executeQuery();
+            while (rs.next()) {
+                Ticket ticket = new Ticket();
+                ticket.setId(rs.getInt("user_id"));
+                ticket.setUserId(rs.getInt("user_id"));
+                ticket.setAmount((float) rs.getInt("amount") / 100);
+                ticket.setDesc(rs.getString("description"));
+                tickets.add(ticket);
+            }
+            return tickets;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return tickets;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return tickets;
+        }
+    }
 }
