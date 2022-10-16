@@ -54,4 +54,9 @@ public class TicketController {
             return "Ticket is already processed";
         }
     }
+
+    public static List<Ticket> getPreviousTickets(int user_id) {
+        List<Ticket> tickets = TicketDao.getAllTicketsById(user_id);
+        return tickets;
+    }
 }

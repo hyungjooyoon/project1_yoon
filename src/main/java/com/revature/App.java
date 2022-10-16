@@ -47,6 +47,7 @@ public class App
                     User user = ctx.bodyAsClass(User.class);
                     int loggedIn = UserController.login(user);
                     if (loggedIn == 1) {
+                        ctx.sessionAttribute("user_id", user.getId());
                         ctx.sessionAttribute("username", user.getUsername());
                         ctx.sessionAttribute("role", user.getRole());
                         ctx.result("Successfully Logged In");
@@ -66,7 +67,12 @@ public class App
                     }
                 });
                 get(ctx -> {
-                    ctx.result("Previously Submitted Tickets");
+                    List<Ticket> tickets = TicketController.getPreviousTickets(ctx.sessionAttribute("user_id"));
+                    if (tickets.size() == 0) {
+                        ctx.result("No previously submitted tickets");
+                    } else {
+                        ctx.json(tickets);
+                    }
                 });
                 post(ctx -> {
                     Ticket ticket = ctx.bodyAsClass(Ticket.class);

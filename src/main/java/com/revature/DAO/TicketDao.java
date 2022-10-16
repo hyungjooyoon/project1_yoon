@@ -94,4 +94,32 @@ public class TicketDao {
         }
         
     }
+
+    public static List<Ticket> getAllTicketsById(int user_id) {
+        List<Ticket> tickets = new ArrayList<>();
+        try (Connection conn = Database.getConnection();
+            PreparedStatement stmt = conn.prepareStatement(
+            "SELECT * FROM ticketapi.tickets WHERE user_id = ?")) {
+                stmt.setInt(1, user_id);
+                try {
+                    ResultSet rs = stmt.executeQuery();
+                    while (rs.next()) {
+                        Ticket ticket = new Ticket();
+                        ticket.setId(rs.getInt("ticket_id"));
+                        ticket.setUserId(rs.getInt("user_id"));
+                        ticket.setAmount((float) rs.getInt("amount") / 100);
+                        ticket.setDesc(rs.getString("description"));
+                        ticket.setStatus(rs.getString("status"));
+                        tickets.add(ticket);
+                    }
+                    return tickets;
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                    return tickets;
+                }
+            } catch (SQLException e) {
+                e.printStackTrace();
+                return tickets;
+            }
+    }
 }
