@@ -2,6 +2,9 @@ package com.revature;
 
 import io.javalin.Javalin;
 import io.javalin.http.UnauthorizedResponse;
+import io.javalin.validation.BodyValidator;
+
+
 import static io.javalin.apibuilder.ApiBuilder.*;
 
 import java.util.List;
@@ -11,6 +14,7 @@ import com.revature.Model.*;
 import com.revature.DAO.UserDao;
 import com.revature.Controller.UserController;
 import com.revature.DAO.TicketDao;
+import com.fasterxml.jackson.databind.exc.InvalidFormatException;
 import com.revature.Controller.TicketController;
 import com.revature.Util.SessionUtil;
 
@@ -52,7 +56,7 @@ public class App
                         ctx.sessionAttribute("role", user.getRole());
                         ctx.result("Successfully Logged In");
                     } else {
-                        ctx.result("Invalid Credentials");
+                        ctx.status(401).result("Invalid Credentials");
                     }
                 });
             });
@@ -75,12 +79,13 @@ public class App
                     }
                 });
                 post(ctx -> {
-                    Ticket ticket = ctx.bodyAsClass(Ticket.class);
-                    String res = TicketController.register(ticket);
-                    System.out.println(ticket.getId());
-                    System.out.println(ticket.getAmount());
-                    System.out.println(ticket.getDesc());
-                    ctx.result(res);                  
+                    Ticket ticket = ctx.bodyValidator(Ticket.class).get();
+                    ticket.setUserId(ctx.sessionAttribute("user_id"));
+                    int res = TicketController.submit(ticket);
+                    if (res == 1) {
+                        ctx.status(200).result("Ticket submitted succesfully");
+                    }
+                    ctx.status(400).result("Error submitting ticket");                  
                 });
             });
         });
@@ -103,7 +108,32 @@ public class App
                 });
                 post(ctx -> {
                     byte[] jsonData = ctx.bodyAsBytes();
-                    ctx.result(TicketController.processTicket(jsonData));
+                    int res = TicketController.processTicket(jsonData);
+                    if (res == 0) {
+                        ctx.status(400).result("Error processing ticket");
+                    } else if (res == 1) {
+                        ctx.status(200).result("Succesfully processed ticket");
+                    } else if (res == 2) {
+                        ctx.status(404).result("Ticket doesn't exist");
+                    } else if (res == 3) {
+                        ctx.status(405).result("Ticket is already processed");
+                    }
+                });
+            });
+        });
+
+        app.routes(() -> {
+            path("role", () -> {
+                before(ctx -> {
+                    String role = ctx.sessionAttribute("role");
+                    if (role == null || !role.equals("manager")) {
+                        throw new UnauthorizedResponse();
+                    }
+                });
+
+                post(ctx -> {
+                    byte[] jsonData = ctx.bodyAsBytes();
+                    ctx.result(UserController.changeRole(jsonData));
                 });
             });
         });

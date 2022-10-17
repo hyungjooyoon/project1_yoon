@@ -49,4 +49,23 @@ public class UserDao {
         }
         return user;
     }
+
+    public static int updateRole(int user_id, String role) {
+        try (Connection conn = Database.getConnection();
+            PreparedStatement stmt = conn.prepareStatement(
+            "UPDATE ticketapi.accounts SET role = ? WHERE user_id = ?")) {
+                stmt.setString(1, role);
+                stmt.setInt(2, user_id);
+                try {
+                    stmt.executeUpdate();
+                    return 1;
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                    return 0;
+                }
+            } catch (SQLException e) {
+                e.printStackTrace();
+                return 0;
+            } 
+    }
 }

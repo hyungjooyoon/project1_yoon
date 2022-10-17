@@ -10,10 +10,11 @@ public class TicketDao {
     public static int addTicket(Ticket ticket) {
         try (Connection conn = Database.getConnection();
             PreparedStatement stmt = conn.prepareStatement(
-            "INSERT INTO ticketapi.tickets(user_id, amount, description) VALUES(?, ?, ?)")) {
+            "INSERT INTO ticketapi.tickets(user_id, amount, type, description) VALUES(?, ?, ?, ?)")) {
             stmt.setInt(1, ticket.getUserId());
-            stmt.setInt(2, (int) (ticket.getAmount() * 100));
-            stmt.setString(3, ticket.getDesc());
+            stmt.setInt(2, (int) (Math.floor(ticket.getAmount() * 100)));
+            stmt.setString(3, ticket.getType());
+            stmt.setString(4, ticket.getDesc());
             try {
                 stmt.executeUpdate();
                 return 1;
@@ -40,7 +41,9 @@ public class TicketDao {
                 ticket.setId(rs.getInt("ticket_id"));
                 ticket.setUserId(rs.getInt("user_id"));
                 ticket.setAmount((float) rs.getInt("amount") / 100);
+                ticket.setType(rs.getString("type"));
                 ticket.setDesc(rs.getString("description"));
+                ticket.setStatus(rs.getString("status"));
                 tickets.add(ticket);
             }
             return tickets;
@@ -108,6 +111,7 @@ public class TicketDao {
                         ticket.setId(rs.getInt("ticket_id"));
                         ticket.setUserId(rs.getInt("user_id"));
                         ticket.setAmount((float) rs.getInt("amount") / 100);
+                        ticket.setType(rs.getString("type"));
                         ticket.setDesc(rs.getString("description"));
                         ticket.setStatus(rs.getString("status"));
                         tickets.add(ticket);

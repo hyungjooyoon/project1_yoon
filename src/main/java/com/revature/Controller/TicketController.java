@@ -11,12 +11,16 @@ import com.revature.DAO.TicketDao;
 
 
 public class TicketController {
-    public static String register(Ticket ticket) {
+    public static int submit(Ticket ticket) {
+        String type = ticket.getType();
+        if (!type.equals("travel") && !type.equals("lodging") && !type.equals("food")) {
+            ticket.setType("other");
+        }
         int added = TicketDao.addTicket(ticket);
         if (added == 1) {
-            return "Ticket submitted succesfully";
+            return 1;
         } else {
-            return "Somthing went wrong. Try again!";
+            return 0;
         }
     }
 
@@ -25,7 +29,7 @@ public class TicketController {
         return tickets;
     }
 
-    public static String processTicket(byte[] jsonData) {
+    public static int processTicket(byte[] jsonData) {
         ObjectMapper objectMapper = new ObjectMapper();
         int ticket_id = 0;
         String status = "";
@@ -37,21 +41,21 @@ public class TicketController {
             status = statusNode.asText();
         } catch (IOException e) {
             e.printStackTrace();
-            return "Error processing ticket";
+            return 0;
         }
         String ticketStatus = TicketDao.getStatus(ticket_id);
         System.out.println(ticketStatus);
         if (ticketStatus.equals("pending")) {
             int updated = TicketDao.updateStatus(ticket_id, status);
             if (updated == 1) {
-                return "Ticket was processed";
+                return 1;
             } else {
-                return "Error processing ticket";
+                return 0;
             }
         } else if (ticketStatus.equals("")) {
-            return "Ticket doesn't exist";    
+            return 2;    
         } else {
-            return "Ticket is already processed";
+            return 3;
         }
     }
 
