@@ -55,4 +55,9 @@ public class Ticket {
     public String getStatus() {
         return this.status;
     }
+
+    public String toString() {
+        return "{ id:" + this.id + ", user_id: " + this.user_id + ", amount: " + this.amount + 
+        ", type: " + this.type + ", desc: " + this.desc + ", status: " + this.status + "}";
+    }
 }

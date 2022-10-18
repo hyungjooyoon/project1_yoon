@@ -36,6 +36,9 @@ public class UserDao {
             stmt.setString(1, username);
             try {
                 ResultSet rs = stmt.executeQuery();
+                if (!rs.isBeforeFirst()) {
+                    return user;
+                }
                 rs.next();
                 user.setId(rs.getInt("user_id"));
                 user.setUsername(rs.getString("username"));
@@ -57,8 +60,11 @@ public class UserDao {
                 stmt.setString(1, role);
                 stmt.setInt(2, user_id);
                 try {
-                    stmt.executeUpdate();
-                    return 1;
+                    int rows = stmt.executeUpdate();
+                    if (rows == 1) {
+                        return 1;
+                    }
+                    return 0;
                 } catch (SQLException e) {
                     e.printStackTrace();
                     return 0;

@@ -37,4 +37,13 @@ public class User {
     public String getRole() {
 	    return this.role;
     }
+
+    public String toString() {
+        return "{ id: " + this.id + ", username: " + this.username + ", password: " + this.password + ", role: " + this.role + "}";
+    }
+
+    public User() {
+        this.username = "";
+        this.password = "";
+    }
 }

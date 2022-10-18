@@ -21,6 +21,9 @@ public class UserController {
 
     public static int login(User user) {
         User account = UserDao.getUser(user.getUsername());
+        if (account.getUsername().equals("") && account.getPassword().equals("")) {
+            return 0;
+        }        
         boolean same = Auth.checkPassword(user.getPassword(), account.getPassword());
         if (same == true) {
             user.setRole(account.getRole());
@@ -31,7 +34,7 @@ public class UserController {
         }
     }
 
-    public static String changeRole(byte[] jsonData) {
+    public static int changeRole(byte[] jsonData) {
         ObjectMapper objectMapper = new ObjectMapper();
         int user_id = 0;
         String role = "";
@@ -41,15 +44,19 @@ public class UserController {
             user_id = idNode.asInt();
             JsonNode roleNode = rootNode.path("role");
             role = roleNode.asText();
+            if (user_id == 0 || (!role.equals("employee") && !role.equals("manager"))) {
+                return 0;
+            }
         } catch (IOException e) {
             e.printStackTrace();
-            return "Error changing role";
+            return 0;
         }
         int updated = UserDao.updateRole(user_id, role);
+        System.out.println(updated);
         if (updated == 1) {
-            return "User role changed successfully";
+            return 1;
         } else {
-            return "Error changing user role";
+            return 2;
         }
     }
 }

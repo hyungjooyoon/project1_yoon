@@ -2,19 +2,14 @@ package com.revature;
 
 import io.javalin.Javalin;
 import io.javalin.http.UnauthorizedResponse;
-import io.javalin.validation.BodyValidator;
+
 
 
 import static io.javalin.apibuilder.ApiBuilder.*;
-
 import java.util.List;
 
-import db.Database;
 import com.revature.Model.*;
-import com.revature.DAO.UserDao;
 import com.revature.Controller.UserController;
-import com.revature.DAO.TicketDao;
-import com.fasterxml.jackson.databind.exc.InvalidFormatException;
 import com.revature.Controller.TicketController;
 import com.revature.Util.SessionUtil;
 
@@ -35,7 +30,7 @@ public class App
                     ctx.result("Please Register");
                 });
                 post(ctx -> {
-                    User user = ctx.bodyAsClass(User.class);
+                    User user = ctx.bodyValidator(User.class).get();
                     String res = UserController.register(user);
                     ctx.result(res);
                 });
@@ -48,7 +43,7 @@ public class App
                     ctx.result("Log In");
                 });
                 post(ctx -> {
-                    User user = ctx.bodyAsClass(User.class);
+                    User user = ctx.bodyValidator(User.class).get();
                     int loggedIn = UserController.login(user);
                     if (loggedIn == 1) {
                         ctx.sessionAttribute("user_id", user.getId());
@@ -133,7 +128,14 @@ public class App
 
                 post(ctx -> {
                     byte[] jsonData = ctx.bodyAsBytes();
-                    ctx.result(UserController.changeRole(jsonData));
+                    int res = UserController.changeRole(jsonData);
+                    if (res == 0) {
+                        ctx.status(400).result("Invalid input");
+                    } else if (res == 1) {
+                        ctx.status(200).result("Role changed succesfully");
+                    } else if (res == 2)  {
+                        ctx.status(404).result("User doesn't exist");
+                    }
                 });
             });
         });

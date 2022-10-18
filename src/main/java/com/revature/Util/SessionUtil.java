@@ -7,12 +7,24 @@ import org.eclipse.jetty.server.session.DefaultSessionCache;
 import org.eclipse.jetty.server.session.JDBCSessionDataStoreFactory;
 import org.eclipse.jetty.server.session.SessionCache;
 import java.util.function.Supplier;
-
+import java.util.Properties;
+import java.io.IOException;
 import db.Database;
 
 public class SessionUtil {
 
-    public static Supplier<SessionHandler> supplier = () -> sqlSessionHandler("org.postgresql.ds.PGSimpleDataSource", "postgresql://localhost:5432/project1");
+    private static Properties prop = new Properties();
+    private static String url;
+    static {
+        try {
+            prop.load(Database.class.getClassLoader().getResourceAsStream("db.properties"));
+            url = prop.getProperty("url");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static Supplier<SessionHandler> supplier = () -> sqlSessionHandler("org.postgresql.ds.PGSimpleDataSource", url);
 
     public static SessionHandler sqlSessionHandler(String driver, String url) {
         SessionHandler sessionHandler = new SessionHandler();
