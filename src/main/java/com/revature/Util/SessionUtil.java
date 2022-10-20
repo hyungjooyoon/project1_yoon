@@ -17,7 +17,7 @@ public class SessionUtil {
     private static String url;
     static {
         try {
-            prop.load(Database.class.getClassLoader().getResourceAsStream("db.properties"));
+            prop.load(SessionUtil.class.getClassLoader().getResourceAsStream("db.properties"));
             url = prop.getProperty("url");
         } catch (IOException e) {
             e.printStackTrace();

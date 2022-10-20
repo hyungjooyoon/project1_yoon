@@ -56,6 +56,16 @@ public class Ticket {
         return this.status;
     }
 
+    public Ticket(float amount, String type, String desc) {
+        this.amount = amount;
+        this.type = type;
+        this.desc = desc;
+    } 
+
+    public Ticket() {
+        
+    }
+
     public String toString() {
         return "{ id:" + this.id + ", user_id: " + this.user_id + ", amount: " + this.amount + 
         ", type: " + this.type + ", desc: " + this.desc + ", status: " + this.status + "}";

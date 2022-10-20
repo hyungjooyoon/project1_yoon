@@ -10,13 +10,17 @@ public class TicketDao {
     public static int addTicket(Ticket ticket) {
         try (Connection conn = Database.getConnection();
             PreparedStatement stmt = conn.prepareStatement(
-            "INSERT INTO ticketapi.tickets(user_id, amount, type, description) VALUES(?, ?, ?, ?)")) {
+            "INSERT INTO ticketapi.tickets(user_id, amount, type, description) VALUES(?, ?, ?, ?)",
+            Statement.RETURN_GENERATED_KEYS)) {
             stmt.setInt(1, ticket.getUserId());
             stmt.setInt(2, (int) (Math.floor(ticket.getAmount() * 100)));
             stmt.setString(3, ticket.getType());
             stmt.setString(4, ticket.getDesc());
             try {
                 stmt.executeUpdate();
+                ResultSet keys = stmt.getGeneratedKeys();
+                keys.next();
+                ticket.setId(keys.getInt("ticket_id"));
                 return 1;
             } catch (SQLException e) {
                 e.printStackTrace();

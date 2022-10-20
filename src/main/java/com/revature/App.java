@@ -1,15 +1,15 @@
 package com.revature;
 
 import io.javalin.Javalin;
+import io.javalin.http.BadRequestResponse;
 import io.javalin.http.UnauthorizedResponse;
-
-
-
+import io.javalin.http.UploadedFile;
 import static io.javalin.apibuilder.ApiBuilder.*;
 import java.util.List;
 
 import com.revature.Model.*;
 import com.revature.Controller.UserController;
+import com.revature.Controller.ReceiptController;
 import com.revature.Controller.TicketController;
 import com.revature.Util.SessionUtil;
 
@@ -74,13 +74,30 @@ public class App
                     }
                 });
                 post(ctx -> {
-                    Ticket ticket = ctx.bodyValidator(Ticket.class).get();
+                    float amount;
+                    try {
+                        amount = Float.parseFloat(ctx.formParam("amount"));
+                    } catch (NumberFormatException e) {
+                        e.printStackTrace();
+                        throw new BadRequestResponse();
+                    } catch (NullPointerException e) {
+                        e.printStackTrace();
+                        throw new BadRequestResponse();
+                    }
+                    String type = ctx.formParam("type");
+                    String desc = ctx.formParam("desc");
+                    Ticket ticket = new Ticket(amount, type, desc);
                     ticket.setUserId(ctx.sessionAttribute("user_id"));
                     int res = TicketController.submit(ticket);
                     if (res == 1) {
+                        UploadedFile uploadedFile = ctx.uploadedFile("receipt");
+                        if (uploadedFile != null) {
+                            ReceiptController.saveReceipt(ticket.getId(), uploadedFile);
+                        }
                         ctx.status(200).result("Ticket submitted succesfully");
+                    } else {
+                        ctx.status(400).result("Error submitting ticket");                  
                     }
-                    ctx.status(400).result("Error submitting ticket");                  
                 });
             });
         });
@@ -136,6 +153,22 @@ public class App
                     } else if (res == 2)  {
                         ctx.status(404).result("User doesn't exist");
                     }
+                });
+            });
+        });
+
+        app.routes(() -> {
+            path("receipts", () -> {
+                before(ctx -> {
+                    String username = ctx.sessionAttribute("username");
+                    if (username == null) {
+                        throw new UnauthorizedResponse();
+                    }
+                });
+                get(ctx -> {
+                    byte[] jsonData = ctx.bodyAsBytes();
+                    byte[] imgData = ReceiptController.getImageData(jsonData);
+                    ctx.status(200).json(imgData);
                 });
             });
         });
