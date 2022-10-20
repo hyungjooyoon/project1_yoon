@@ -172,5 +172,20 @@ public class App
                 });
             });
         });
+
+        app.routes(() -> {
+            path("invalidate", () -> {
+                before(ctx -> {
+                    String username = ctx.sessionAttribute("username");
+                    if (username == null) {
+                        throw new UnauthorizedResponse();
+                    }
+                });
+                post(ctx -> {
+                    ctx.req().getSession().invalidate();
+                    ctx.status(200).result("You have been logged out");
+                });
+            });
+        });
     }
 }
